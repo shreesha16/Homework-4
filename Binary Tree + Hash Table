@@ -1,0 +1,83 @@
+import time
+import random
+
+class Node:
+    def __init__(self, key):
+        self.left = None
+        self.right = None
+        self.val = key
+
+
+def insert(root, key):
+    if root is None:
+        return Node(key)
+    else:
+        if root.val == key:
+            return root
+        elif root.val < key:
+            root.right = insert(root.right, key)
+        else:
+            root.left = insert(root.left, key)
+    return root
+
+
+time_check = 0
+end = 10
+r = Node(9)
+while time_check < 3:
+    start_time = time.time()
+    for i in range(end):
+        n = random.randint(0, 50)
+        r = insert(r, n)
+    end_time = time.time()
+    n = end_time - start_time * 10**3
+    time_check = end_time - start_time
+    end *= 10
+#   print(end, " ", time_check)
+
+
+def display_hash(hashTable):
+    for i in range(len(hashTable)):
+        print(i, end=" ")
+
+        for j in hashTable[i]:
+            print("-->", end=" ")
+            print(j, end=" ")
+
+        print()
+
+
+# Creating Hashtable as
+# a nested list.
+
+
+
+# Hashing Function to return
+# key for every value.
+def Hashing(keyvalue):
+    return keyvalue % len(HashTable)
+
+
+# Insert Function to add
+# values to the hash table
+def insert(Hashtable, keyvalue, value):
+    hash_key = Hashing(keyvalue)
+    Hashtable[hash_key].append(value)
+
+
+
+
+time_check = 0
+end = 10
+r = Node(9)
+while time_check < 3:
+    HashTable = [[] for _ in range(end)]
+    start_time = time.time()
+    for i in range(end):
+        n = random.randint(0, 50)
+        insert(HashTable, n, n)
+    end_time = time.time()
+    n = end_time - start_time * 10**3
+    time_check = end_time - start_time
+    end *= 10
+    print(end, " ", time_check)
