@@ -1,0 +1,191 @@
+import time
+
+
+def insertion_sort(nums):
+    # Start on the second element as we assume the first element is sorted
+    for i in range(1, len(nums)):
+        item_to_insert = nums[i]
+        # And keep a reference of the index of the previous element
+        j = i - 1
+        # Move all items of the sorted segment forward if they are larger than
+        # the item to insert
+        while j >= 0 and nums[j] > item_to_insert:
+            nums[j + 1] = nums[j]
+            j -= 1
+        # Insert the item
+        nums[j + 1] = item_to_insert
+
+
+def merge(left_list, right_list):
+    sorted_list = []
+    left_list_index = right_list_index = 0
+
+    # We use the list lengths often, so its handy to make variables
+    left_list_length, right_list_length = len(left_list), len(right_list)
+
+    for _ in range(left_list_length + right_list_length):
+        if left_list_index < left_list_length and right_list_index < right_list_length:
+            # We check which value from the start of each list is smaller
+            # If the item at the beginning of the left list is smaller, add it
+            # to the sorted list
+            if left_list[left_list_index] <= right_list[right_list_index]:
+                sorted_list.append(left_list[left_list_index])
+                left_list_index += 1
+            # If the item at the beginning of the right list is smaller, add it
+            # to the sorted list
+            else:
+                sorted_list.append(right_list[right_list_index])
+                right_list_index += 1
+
+        # If we've reached the end of the of the left list, add the elements
+        # from the right list
+        elif left_list_index == left_list_length:
+            sorted_list.append(right_list[right_list_index])
+            right_list_index += 1
+        # If we've reached the end of the of the right list, add the elements
+        # from the left list
+        elif right_list_index == right_list_length:
+            sorted_list.append(left_list[left_list_index])
+            left_list_index += 1
+
+    return sorted_list
+
+
+def merge_sort(nums):
+    # If the list is a single element, return it
+    if len(nums) <= 1:
+        return nums
+
+    # Use floor division to get midpoint, indices must be integers
+    mid = len(nums) // 2
+
+    # Sort and merge each half
+    left_list = merge_sort(nums[:mid])
+    right_list = merge_sort(nums[mid:])
+
+    # Merge the sorted lists into a new one
+    return merge(left_list, right_list)
+
+
+MINIMUM = 62
+
+
+def insertion_sort2(array, left, right):
+    for i in range(left + 1, right + 1):
+        element = array[i]
+        j = i - 1
+        while element < array[j] and j >= left:
+            array[j + 1] = array[j]
+            j -= 1
+        array[j + 1] = element
+    return array
+
+
+def merge2(array, l, m, r):
+    array_length1 = m - l + 1
+    array_length2 = r - m
+    left = []
+    right = []
+    for i in range(0, array_length1):
+        left.append(array[l + i])
+    for i in range(0, array_length2):
+        right.append(array[m + 1 + i])
+
+    i = 0
+    j = 0
+    k = l
+
+    while j < array_length2 and i < array_length1:
+        if left[i] <= right[j]:
+            array[k] = left[i]
+            i += 1
+
+        else:
+            array[k] = right[j]
+            j += 1
+
+        k += 1
+
+    while i < array_length1:
+        array[k] = left[i]
+        k += 1
+        i += 1
+
+    while j < array_length2:
+        array[k] = right[j]
+        k += 1
+        j += 1
+
+
+def find_minrun(n):
+    r = 0
+    while n >= MINIMUM:
+        r |= n & 1
+        n >>= 1
+    return n + r
+
+
+def tim_sort(array):
+    n = len(array)
+    minrun = find_minrun(n)
+
+    for start in range(0, n, minrun):
+        end = min(start + minrun - 1, n - 1)
+        insertion_sort2(array, start, end)
+
+    size = minrun
+    while size < n:
+
+        for left in range(0, n, 2 * size):
+            mid = min(n - 1, left + size - 1)
+            right = min((left + 2 * size - 1), (n - 1))
+            merge2(array, left, mid, right)
+
+        size = 2 * size
+    # Verify it works
+
+
+random_list_of_nums = input().split(", ")
+random_list_of_nums_int_insert = []
+random_list_of_nums_int_merge = []
+random_list_of_nums_int_tim = []
+for i in random_list_of_nums:
+    random_list_of_nums_int_insert.append(int(i))
+    random_list_of_nums_int_merge.append(int(i))
+    random_list_of_nums_int_tim.append(int(i))
+
+
+stop = False
+end_list = 10
+count = 0
+while end_list != 200:
+    start = time.time()
+    insertion_sort(random_list_of_nums_int_insert[0:end_list])
+    end = time.time()
+    insert_time = (end - start) * 10**3
+    print(insert_time)
+
+    end_list += 10
+
+end_list = 10
+print("----------------------------------------------------------------------------")
+while end_list != 200:
+    start2 = time.time()
+    random_list_of_nums_int = merge_sort(random_list_of_nums_int_merge[0:end_list])
+    end2 = time.time()
+    merge_time = (end2-start2) * 10**3
+
+    print(merge_time)
+
+    end_list += 10
+
+end_list = 10
+print("----------------------------------------------------------------------------")
+while end_list != 200:
+    start3 = time.time()
+    tim_sort(random_list_of_nums_int_tim)
+    end3 = time.time()
+    tim_time = (end3-start3) * 10**3
+    print(tim_time)
+
+    end_list += 10
